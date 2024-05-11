@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 use Config\Services;
-use App\Entities\{ Clients, Projects };
-use App\Models\{ClientModel};
+use App\Entities\{ Clients, Projects, Users, Tasks};
+use App\Models\{ClientModel, TaskModel};
 
 class AdminController extends BaseController
 {
@@ -203,15 +203,197 @@ class AdminController extends BaseController
 	}
 
 
+	function admin_users(){
+
+		$model = model("UserModel");
+
+		$find = $model->get();
+
+		$result_arr = [];
+
+		if($find->getNumRows()){
+			$result_arr = $find->getResult();
+		}
+
+		$obj = [
+			'results' => $result_arr
+		];
+
+		return admin_html('admin-users', $obj);
+	}
+
+	function admin_add_user(){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_add_user');
+
+		$obj = [
+			'validator' => $valid
+		];
+
+		return admin_html('admin-adduser', $obj);
+	}
+
+	function do_add_user(){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_add_user');
+
+		$valid->withRequest($this->request)->run();		
+
+		if(!count($valid->getErrors())){
+
+			$data = $this->request->getPost();
+
+			$new = new Users($data);
+			$model = model('UserModel');
+
+			$model->save($new);
+
+			return redirect()->to("/admin/users");
+
+		}
+
+		$this->admin_add_user();
+
+	}
+
 	function admin_project_tasks(){
 
-		$model = model('ProjectModel');		
-		
+		$model = model('TaskModel');				
+		$all_task = $model->get_all_task();
+
 		$obj = [
-			'tasks' => []
+			'tasks' => $all_task,
 		];
 
 		return admin_html('admin-tasks', $obj);
+
+	}
+
+	function admin_new_task(){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_task');
+
+		$model = model('ProjectModel');		
+		$usermodel = model('UserModel');
+
+		$all_proj = $model->get();
+		$all_user = $usermodel->where('user_type', 'installer')->get();
+
+		$proj_arr = [];
+		$user_arr = [];
+
+		if($all_proj->getNumRows()){
+			$temp = $all_proj->getResult();
+			$proj_arr = array_map(function($val){
+				return [
+					'value' => $val->id,
+					'label' => $val->projname
+				];
+			}, $temp);
+		}
+
+		if($all_user->getNumRows()){			
+			$temp = $all_user->getResult();
+			$user_arr = array_map(function($val){
+				return [
+					'value' => $val->id,
+					'label' => $val->fname . ' ' . $val->lname
+				];
+			}, $temp);
+		}
+
+		$obj = [
+			'tasks' => [],
+			'projects' => $proj_arr,
+			'users' => $user_arr,
+			'validator' => $valid
+		];
+
+		return admin_html('admin-newtask', $obj);
+
+	}
+
+	function do_new_task(){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_task');
+
+		$valid->withRequest($this->request)->run();		
+
+		if(!count($valid->getErrors())){
+
+			$data = $this->request->getPost();
+
+			$new = new Tasks($data);
+
+			$model = model('TaskModel');
+
+			$model->save($new);
+
+			return redirect()->to("/admin/tasks");
+
+		}
+
+		$this->admin_new_task();
+
+	}
+
+	function admin_view_task($task_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_add_comment');
+
+		$model_task = model("TaskModel");
+		$model_comments = model('CommentModel');
+
+		$find = $model_task->get_single_task($task_id);
+		$find_comments = $model_comments->get_all_comments($task_id);
+
+		if(!$find){
+			return "Invalid Tasks, please go back!";
+		}
+
+		$obj = [
+			'data' => $find,
+			'comments' => $find_comments,
+			'validator' => $valid
+		];
+
+		return admin_html('admin-viewtask', $obj);
+
+	}
+
+	function admin_task_comment($task_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_add_comment');
+
+		$valid->withRequest($this->request)->run();		
+
+		if(!count($valid->getErrors())){
+
+			$model = model('CommentModel');
+
+			$model->insert([
+				'task_id' => $task_id,
+				'comment' => post_request('comment'),
+				'user_id' => 0,
+				'status' => 1
+			]);
+
+			return redirect()->to('admin/view-task/' . $task_id);
+		}
+
+		$this->admin_view_task($task_id);
 
 	}
 

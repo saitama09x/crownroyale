@@ -13,8 +13,15 @@ class Tasks extends Entity{
 		'project_id' => '0',
 		'descriptions' => '',
 		'user_id' => '0',
-		'status' => 'pending'		
+		'status' => 'pending',
+		'due_date' => ''	
 	];
 
+	function setDue_date($date){
 
+		$this->attributes['due_date'] = date("Y-m-d", strtotime($date));
+
+		return $this;
+
+	}
 }

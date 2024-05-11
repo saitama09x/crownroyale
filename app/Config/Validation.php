@@ -114,4 +114,74 @@ class Validation extends BaseConfig
             ],
         ]
     ];
+
+    public $valid_add_user = [        
+        'fname' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'lname' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'username' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'password' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'user_type' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+    ];
+
+     public $valid_new_task = [        
+        'project_id' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'descriptions' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'user_id' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'due_date' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ]    
+    ];
+
+
+    public $valid_add_comment = [        
+        'comment' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ]
+    ];
 }
