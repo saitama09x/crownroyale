@@ -4,6 +4,8 @@ use CodeIgniter\Router\RouteCollection;
 use App\Controllers\DashboardController;
 use App\Controllers\UserController;
 use App\Controllers\AdminController;
+use App\Controllers\TaskController;
+use App\Controllers\ProjectController;
 
 /**
  * @var RouteCollection $routes
@@ -11,7 +13,28 @@ use App\Controllers\AdminController;
 $routes->get('/', 'DashboardController::main_dashboard');
 
 $routes->get('login', 'UserController::user_login');
+$routes->get('logout', 'UserController::logout');
 
+$routes->post('login', 'UserController::do_login');
+
+$routes->group('tasks', function($routes){
+
+	$routes->get("/", 'TaskController::project_tasks');
+
+	$routes->get('view-task/(:any)', 'TaskController::view_task/$1');
+
+	$routes->put('view-task/(:any)', 'TaskController::task_comment/$1');
+});
+
+
+$routes->group('projects', function($routes){
+
+	$routes->get("/", 'ProjectController::main_projects');
+	$routes->get("new-project", 'ProjectController::new_project');
+
+
+	$routes->post('new-project', 'ProjectController::do_new_project');
+});
 
 $routes->group('admin', function($routes){
 

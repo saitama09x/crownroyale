@@ -55,3 +55,35 @@ if(!function_exists('admin_html')){
 
 }
 
+
+if(!function_exists('task_html')){
+
+	function task_html($page, $data = []){
+
+		 helper('form');
+
+		 if (!is_file( APPPATH . '/Views/tasks/'. $page .'.php')){
+		     throw new \CodeIgniter\Exceptions\PageNotFoundException($page);
+		 }
+
+	     echo view('tasks/'. $page, $data);
+
+	}
+
+}
+
+if(!function_exists('project_html')){
+
+	function project_html($page, $data = []){
+
+		 helper('form');
+
+		 if (!is_file( APPPATH . '/Views/projects/'. $page .'.php')){
+		     throw new \CodeIgniter\Exceptions\PageNotFoundException($page);
+		 }
+
+	     echo view('projects/'. $page, $data);
+
+	}
+
+}

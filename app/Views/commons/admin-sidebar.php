@@ -25,60 +25,43 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-           <?php if(is_admin() || is_manager()): ?>
-            <li class="nav-item">
-              <a href="<?= site_url('/') ?>" class="nav-link">
-                <i class="nav-icon fas fa-th"></i>
-                <p>
-                  Dashboard
-                </p>
-              </a>
-            </li>
-          <?php endif; ?>
-          <?php if(is_admin()): ?>
           <li class="nav-item">
-            <a href="<?= site_url('/clients') ?>" class="nav-link">
+            <a href="<?= site_url('/admin') ?>" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Dashboard
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?= site_url('/admin/clients') ?>" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Clients
               </p>
             </a>
           </li>
-          <?php endif; ?>
-          <?php if(is_admin() || is_manager()): ?>
           <li class="nav-item">
-            <a href="<?= site_url('/projects') ?>" class="nav-link">
+            <a href="<?= site_url('/admin/projects') ?>" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Projects
               </p>
             </a>
           </li>
-          <?php endif; ?>
-          <?php if(is_installer() || is_admin() || is_manager()): ?>
           <li class="nav-item">
-            <a href="<?= site_url('/tasks') ?>" class="nav-link">
+            <a href="<?= site_url('/admin/tasks') ?>" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Tasks
               </p>
             </a>
           </li>
-          <?php endif; ?>
-          <?php if(is_admin()): ?>
           <li class="nav-item">
-            <a href="<?= site_url('/users') ?>" class="nav-link">
+            <a href="<?= site_url('/admin/users') ?>" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Users
-              </p>
-            </a>
-          </li>
-          <?php endif; ?>
-          <li class="nav-item">
-            <a href="<?= site_url('/logout') ?>" class="nav-link">              
-              <p>
-                Logout
               </p>
             </a>
           </li>
