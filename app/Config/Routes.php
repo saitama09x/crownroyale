@@ -6,6 +6,7 @@ use App\Controllers\UserController;
 use App\Controllers\AdminController;
 use App\Controllers\TaskController;
 use App\Controllers\ProjectController;
+use App\Controllers\PaymentController;
 
 /**
  * @var RouteCollection $routes
@@ -24,6 +25,7 @@ $routes->group('tasks', function($routes){
 	$routes->get('view-task/(:any)', 'TaskController::view_task/$1');
 
 	$routes->put('view-task/(:any)', 'TaskController::task_comment/$1');
+	$routes->put('task-status/(:any)', 'TaskController::update_task_status/$1');
 });
 
 
@@ -34,6 +36,14 @@ $routes->group('projects', function($routes){
 
 
 	$routes->post('new-project', 'ProjectController::do_new_project');
+});
+
+$routes->group('payments', function($routes){
+
+	$routes->get("/", 'PaymentController::main_payments');
+	$routes->get('view-payments/(:any)', 'PaymentController::view_payments/$1');
+
+	$routes->post('add-payment', 'AdminController::do_addpayment');
 });
 
 $routes->group('admin', function($routes){
@@ -50,12 +60,17 @@ $routes->group('admin', function($routes){
 	$routes->get('add-user', 'AdminController::admin_add_user');
 	$routes->get('new-task', 'AdminController::admin_new_task');
 	$routes->get('view-task/(:any)', 'AdminController::admin_view_task/$1');
+	$routes->get('payments', 'AdminController::admin_payments');
+	$routes->get('view-payments/(:any)', 'AdminController::admin_viewpayments/$1');
 
 	$routes->post('do-login', 'AdminController::do_login');
 	$routes->post('add-client', 'AdminController::do_add_client');
 	$routes->post('new-project', 'AdminController::do_new_project');
 	$routes->post('add-user', 'AdminController::do_add_user');
 	$routes->post('new-task', 'AdminController::do_new_task');
+	$routes->post('add-payment', 'AdminController::do_addpayment');
+	
 	$routes->put('view-task/(:any)', 'AdminController::admin_task_comment/$1');
+	$routes->put('task-status/(:any)', 'AdminController::update_task_status/$1');
 
 });

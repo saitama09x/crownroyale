@@ -83,4 +83,15 @@ class TaskController extends BaseController
 		$this->view_task($task_id);
 
 	}
+
+	function update_task_status($task_id){
+
+		$status = post_request('status');
+
+		$model_task = model("TaskModel");
+
+		$model_task->where('id', $task_id)->set(['status' => $status])->update();
+
+		return redirect()->to("/tasks/view-task/" . $task_id);
+	}
 }

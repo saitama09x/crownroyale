@@ -1,5 +1,7 @@
 <?= $this->extend('layouts/dashboard-layout') ?>
-
+<?= $this->section('page_title') ?>
+New Project
+<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
 <div class='row justify-content-center'>

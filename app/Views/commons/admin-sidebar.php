@@ -6,7 +6,7 @@
           <img src="/assets/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block">Admin</a>
         </div>
       </div>
 
@@ -58,10 +58,25 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="<?= site_url('/admin/payments') ?>" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Payments
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="<?= site_url('/admin/users') ?>" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Users
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?= site_url('/logout') ?>" class="nav-link">              
+              <p>
+                Logout
               </p>
             </a>
           </li>

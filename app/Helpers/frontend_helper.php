@@ -87,3 +87,20 @@ if(!function_exists('project_html')){
 	}
 
 }
+
+
+if(!function_exists('payment_html')){
+
+	function payment_html($page, $data = []){
+
+		 helper('form');
+
+		 if (!is_file( APPPATH . '/Views/payments/'. $page .'.php')){
+		     throw new \CodeIgniter\Exceptions\PageNotFoundException($page);
+		 }
+
+	     echo view('payments/'. $page, $data);
+
+	}
+
+}

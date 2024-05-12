@@ -35,6 +35,34 @@ if(!function_exists('user_id')){
 	}
 }
 
+
+if(!function_exists('user_info')){
+
+	function user_info(){
+		
+		$session = session();
+
+		if($session->has('user-access')){
+
+			$decode = base64_decode($session->get('user-access'));
+			$json = json_decode($decode);
+
+			$model = model('UserModel');
+
+			$find = $model->where('id', $json->user_id)->get();
+
+			if($find->getNumRows()){
+				$row = $find->getRow();
+				return $row->fname . ' ' . $row->lname;
+			}
+
+		}
+		
+		return "";
+
+	}
+}
+
 if(!function_exists('is_installer')){
 
 	function is_installer(){

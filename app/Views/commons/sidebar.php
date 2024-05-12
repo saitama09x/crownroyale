@@ -6,7 +6,7 @@
           <img src="/assets/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block"><?= user_info() ?></a>
         </div>
       </div>
 
@@ -25,7 +25,7 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-           <?php if(is_admin() || is_manager()): ?>
+           <?php if(is_admin() || is_manager() || is_client() ): ?>
             <li class="nav-item">
               <a href="<?= site_url('/') ?>" class="nav-link">
                 <i class="nav-icon fas fa-th"></i>
@@ -71,6 +71,16 @@
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Users
+              </p>
+            </a>
+          </li>
+          <?php endif; ?>
+          <?php if(is_admin() || is_client() ): ?>
+           <li class="nav-item">
+            <a href="<?= site_url('/payments') ?>" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Payments
               </p>
             </a>
           </li>

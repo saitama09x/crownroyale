@@ -1,4 +1,7 @@
 <?= $this->extend('layouts/admin-layout') ?>
+<?= $this->section('page_title') ?>
+Add Client
+<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 

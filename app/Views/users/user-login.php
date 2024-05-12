@@ -6,7 +6,7 @@
 
 <div class="login-box">
   <div class="login-logo">
-    <a href="../../index2.html">CrownRoyale</a>
+    <img src="/images/CRLOGO.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8; width:150px;">
   </div>
   
 <?php if(session()->has('error-login')): ?>
@@ -18,7 +18,7 @@
 
  <div class="card">
     <div class="card-body login-card-body">
-      <p class="login-box-msg">Sign in to start your session</p>
+      <p class="login-box-msg">Signin Your Account</p>
 
       <?= form_open('/login') ?>
         <div class="input-group mb-3">

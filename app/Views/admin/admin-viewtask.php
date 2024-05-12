@@ -1,5 +1,7 @@
 <?= $this->extend('layouts/admin-layout') ?>
-
+<?= $this->section('page_title') ?>
+Task Info
+<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
 <div class='row justify-content-center'>
@@ -11,7 +13,7 @@
 			</div>
 			<div class='col-md-6'>
 				<div class='text-right'>
-					Status: <?= $data->status ?>
+					Status: <?= strtoupper($data->status) ?>
 				</div>
 			</div>
 		</div>
@@ -29,8 +31,30 @@
 			<div class='card-body'>				
 				<p><?= $data->descriptions ?></p>
 			</div>
-			<div class='card-footer text-right'>
-				<div>Due Date:  <?= date('M d, Y', strtotime($data->due_date)) ?></div>
+			<div class='card-footer'>
+				<div class='row'>
+					<div class='col-md-6 text-left'>
+						<?php
+							$status = "pending";
+							if($data->status == 'pending'){
+								$status = 'progress';
+							}
+							else if($data->status == 'progress'){
+								$status = 'completed';
+							}
+						?>
+						<?= form_open('admin/task-status/' . $data->id, '', ['_method' => 'PUT', 'status' => $status]) ?>
+							<?php if($data->status == 'pending'): ?>
+								<button class='btn btn-primary btn-md'>Set to Progress</button>
+							<?php elseif($data->status == 'progress'): ?>
+								<button class='btn btn-success btn-md'>Set to Complete</button>
+							<?php endif ?>
+						<?= form_close() ?>
+					</div>
+					<div class='col-md-6 text-right'>
+						<div>Due Date:  <?= date('M d, Y', strtotime($data->due_date)) ?></div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class='mt-3'>

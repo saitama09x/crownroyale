@@ -1,5 +1,7 @@
 <?= $this->extend('layouts/admin-layout') ?>
-
+<?= $this->section('page_title') ?>
+Tasks
+<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
 <div class='row'>

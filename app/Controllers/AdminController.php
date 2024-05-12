@@ -54,10 +54,28 @@ class AdminController extends BaseController
 
 
 	function admin_dashboard(){
-
+		
 		if($this->session->has('admin-access')){
 			
-			return admin_html('admin-dashboard');
+			$model = model("ProjectModel");
+			$model_task = model('TaskModel');
+
+			$find_series = $model->project_status();
+			$find_payments = $model->get_project_payments();
+
+			$pending = $model_task->count_task_status('pending');
+			$progress = $model_task->count_task_status('progress');
+			$completed = $model_task->count_task_status('completed');
+
+			$obj = [
+				'series' => $find_series,
+				'payments' => $find_payments,
+				'pending' => $pending,
+				'progress' => $progress,
+				'completed' => $completed
+			];
+
+			return admin_html('admin-dashboard', $obj);
 
 		}
 		else{
@@ -394,6 +412,83 @@ class AdminController extends BaseController
 		}
 
 		$this->admin_view_task($task_id);
+
+	}
+
+	function update_task_status($task_id){
+
+		$status = post_request('status');
+
+		$model_task = model("TaskModel");
+
+		$model_task->where('id', $task_id)->set(['status' => $status])->update();
+
+		return redirect()->to("/admin/view-task/" . $task_id);
+	}
+
+	function admin_payments(){
+
+		$model = model('ProjectModel');
+
+		$find_proj = $model->get_project_payments();
+
+		$obj = [
+			'projects' => $find_proj
+		];
+
+		return admin_html('admin-payments', $obj);
+	}
+
+	function admin_viewpayments($proj_id){
+
+		$model = model('PaymentModel');
+		$proj_model = model('ProjectModel');
+
+		$find_payments = $model->get_project_payments($proj_id);
+		$find_project = $proj_model->where('id', $proj_id)->get();
+
+		$obj = [
+			'payments' => $find_payments,
+			'project' => $find_project->getRow()
+		];
+
+		return admin_html('admin-viewpayments', $obj);
+	}
+
+	function do_addpayment(){
+
+		$project_id = post_request('project');
+
+		$amount = post_request('payment');
+
+		if(empty($amount) || empty($project_id)){
+
+			$this->session->setFlashdata('invalid_input', 'Invalid Amount');
+
+			return redirect()->to('/admin/view-payments/' . $project_id);
+
+		}
+
+		$model = model('ProjectModel');
+		$payment_model = model('PaymentModel');
+
+		$find = $model->where('id', $project_id)->get();
+
+		if($find->getNumRows()){
+
+			$row = $find->getRow();
+
+			$data = [
+				'project_id' => $project_id,
+				'client_id' => $row->client_id,
+				'amount' => $amount
+			];
+
+			$payment_model->insert($data);
+
+		}
+
+		return redirect()->to('/admin/view-payments/' . $project_id);
 
 	}
 

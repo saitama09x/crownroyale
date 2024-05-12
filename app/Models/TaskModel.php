@@ -105,4 +105,17 @@ class TaskModel extends Model{
          return $query->getRow();
 
     }
+
+    function count_task_status($status){
+
+
+        $query = $this->db->query("select count(id) as total_task from " . $this->table . ' where status = ?', [$status]);
+
+        if(!$query->getNumRows()){
+            return false;
+         }
+
+         return $query->getRow()->total_task;
+
+    }
 }
