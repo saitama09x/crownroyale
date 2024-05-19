@@ -12,7 +12,7 @@ Payments
 				<table class='table'>
 					<thead><tr><th>Project</th><th>Total Costs</th><th>Amount Paid</th><th>Balance</th><th>Action</th></tr></thead>
 					<tbody>
-						<?php if(!count($projects)): ?>
+						<?php if(!$projects): ?>
 							<tr><td colspan="5" style='text-align: center;'>Empty</td></tr>
 						<?php else: ?>
 							<?php foreach($projects as $r): ?>

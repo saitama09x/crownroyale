@@ -133,6 +133,75 @@ class AdminController extends BaseController
 		return admin_html('admin-newproject', $obj);
 
 	}
+
+
+	function admin_edit_project($project_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_project');
+
+		$model = model('ClientModel');
+		$projmodel = model('ProjectModel');
+
+		$find = $model->where('status', 1)->get();
+		$find_proj = $projmodel->find($project_id);
+
+		if(!$find_proj){
+
+			return "Invalid Project Record";
+
+		}
+
+		$opts = [];
+		if($find->getNumRows()){
+			
+			$temp = $find->getResult();
+
+			$opts = array_map(function($val){
+
+				return [
+					'value' => $val->id,
+					'label' => $val->clientname
+				];
+
+			}, $temp);
+		}
+
+		$obj = [
+			'validator' => $valid,
+			'opts' => $opts,
+			'project' => $find_proj
+		];
+
+		return admin_html('admin-editproject', $obj);
+
+	}
+
+	function do_update_project($project_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_project');
+
+		$valid->withRequest($this->request)->run();		
+
+		if(!count($valid->getErrors())){
+
+			$data = $this->request->getPost();
+
+			$new = new Projects($data);
+			$model = model('ProjectModel');
+
+			$model->where('id', $project_id)->set($new->_get_edit_project())->update();
+
+			return redirect()->to("/admin/edit-project/" . $project_id);
+
+		}
+
+		return $this->admin_edit_project($project_id);
+
+	}
 	
 	function admin_clients(){
 
@@ -193,6 +262,78 @@ class AdminController extends BaseController
 		];
 
 		return admin_html('admin-addclient', $obj);
+
+	}
+
+	function admin_edit_client($id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_client');
+
+		$model = model('ClientModel');
+
+		$find = $model->find($id);
+
+		if(!$find){
+			return "Invalid Record, Please go back!";
+		}
+
+		$obj = [
+			'validator' => $valid,
+			'info' => $find
+		];
+
+		return admin_html('admin-editclient', $obj);
+
+	}
+
+	function do_edit_client($id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_client');
+
+		$valid->withRequest($this->request)->run();
+
+		if(!count($valid->getErrors())){
+
+			$data = $this->request->getPost();
+
+			$new = new Clients($data);
+
+			$model = model('ClientModel');
+
+			$model->where('id', $id)->set($new->_get_edit_client())->update();
+
+			$this->session->setFlashdata('success', 'Successfully Updated');
+
+			return redirect()->to("/admin/edit-client/" . $id);
+
+		}
+
+		return $this->admin_edit_client($id);
+
+	}
+
+	function admin_client_projects($client_id){
+
+		$model = model("ClientModel");
+
+		$find_client = $model->find($client_id);
+
+		if(!$find_client){
+			return "Invalid Client Record";
+		}
+
+		$find = $model->get_projects($client_id);
+
+		$obj = [
+			'projects' => $find,
+			'client' => $find_client
+		];
+
+		return admin_html('admin-clientproj', $obj);
 
 	}
 
@@ -355,6 +496,8 @@ class AdminController extends BaseController
 
 			$model->save($new);
 
+			admin_task_notif(post_request('project_id'), $model->insertID(), "New Task has been created: #" . $model->insertID());
+
 			return redirect()->to("/admin/tasks");
 
 		}
@@ -407,6 +550,8 @@ class AdminController extends BaseController
 				'user_id' => 0,
 				'status' => 1
 			]);
+			
+			admin_comment_notif($task_id, $model->insertID(), "You have new comment in Task #" . $task_id);
 
 			return redirect()->to('admin/view-task/' . $task_id);
 		}
@@ -423,7 +568,31 @@ class AdminController extends BaseController
 
 		$model_task->where('id', $task_id)->set(['status' => $status])->update();
 
+		insert_comment_notif($task_id, "Task #" . $task_id . ' changed to ' . $status);
+
 		return redirect()->to("/admin/view-task/" . $task_id);
+	}
+
+	function admin_single_proj_task($project_id){
+
+		$model = model('TaskModel');			
+		$projmodel = model('ProjectModel');
+
+		$find = $projmodel->find($project_id);
+
+		if(!$find){
+			return "Invalid Project Record";
+		}
+
+		$all_task = $model->get_project_tasks($project_id);
+
+		$obj = [
+			'tasks' => $all_task,
+			'project' => $find
+		];
+
+		return admin_html('admin-projtasks', $obj);
+
 	}
 
 	function admin_payments(){
@@ -491,6 +660,56 @@ class AdminController extends BaseController
 		return redirect()->to('/admin/view-payments/' . $project_id);
 
 	}
+
+
+	function admin_report(){
+
+		$projmodel = model("ProjectModel")->get();
+		$clientmodel = model("ClientModel")->get();
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_filter_report');
+
+		$obj = [
+			'projects' => ($projmodel->getNumRows()) ? array_map(function($val){ return ['label' => $val->projname, 'value' => $val->id]; }, $projmodel->getResult()) : [],
+			'clients' => ($clientmodel->getNumRows()) ? array_map(function($val){ return ['label' => $val->clientname, 'value' => $val->id]; }, $clientmodel->getResult()) : [],
+			'validator' => $valid,
+			'reports' => false
+		];
+
+		return admin_html("admin-report", $obj);
+
+	}
+
+
+	function generate_report(){
+
+		$project_id = post_request('project_id');
+		$client_id = post_request('client_id');
+		$date_from = post_request('date_from');
+		$date_to = post_request('date_to');
+
+		$projmodel = model("ProjectModel");
+		$clientmodel = model("ClientModel");
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_filter_report');
+
+		$reports = $projmodel->get_report($project_id, $client_id, $date_from, $date_to);		
+
+		$obj = [
+			'projects' => ($projmodel->get()->getNumRows()) ? array_map(function($val){ return ['label' => $val->projname, 'value' => $val->id]; }, $projmodel->get()->getResult()) : [],
+			'clients' => ($clientmodel->get()->getNumRows()) ? array_map(function($val){ return ['label' => $val->clientname, 'value' => $val->id]; }, $clientmodel->get()->getResult()) : [],
+			'validator' => $valid,
+			'reports' => $reports
+		];
+
+		return admin_html("admin-report", $obj);
+
+	}
+
 
 }
 

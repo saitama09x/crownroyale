@@ -45,6 +45,37 @@ class DashboardController extends BaseController
 
 	}
 
+	function notification_info($id){
+
+		$notif_model = model("NotificationModel");
+
+		$find_notif = $notif_model->where('id', $id)->get();
+
+		if(!$find_notif->getNumRows()){
+			return "Invalid Notification";
+		}
+
+		$row = $find_notif->getRow();
+
+		$notif_info = false;
+		if($row->module_type == 'task'){
+			$notif_info = $notif_model->get_task_info($id);
+		}
+		else if($row->module_type == 'comment'){
+			$notif_info = $notif_model->get_comment_info($id);
+		}
+
+		$notif_model->where('id', $id)->set(['is_read' => 1])->update();
+
+		$obj = [
+			'notif' => $find_notif->getRow(),
+			'notif_info' => $notif_info
+		];
+
+		return dash_html('notif-info', $obj);
+
+	}
+
 
 }
 

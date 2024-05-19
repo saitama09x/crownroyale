@@ -59,6 +59,18 @@ class TaskModel extends Model{
 
     }
 
+    function get_project_tasks($project_id){
+
+        $query = $this->db->query("select a.*, (select count(id) from comments where task_id = a.id) as total_comments, (select concat(fname, ' ', lname) from users where id = a.user_id) as user from " . $this->table . ' a where project_id = ?', [$project_id]);
+
+        if(!$query->getNumRows()){
+            return false;
+        }
+
+        return $query->getResult();
+
+    }
+
     function get_assigned_tasks($user_id){
 
         $query_proj = $this->db->query('select * from projects where id IN (select project_id from tasks where user_id = ?)', [$user_id]);

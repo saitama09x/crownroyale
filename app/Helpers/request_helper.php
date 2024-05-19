@@ -143,3 +143,52 @@ if(!function_exists('is_admin')){
 	}
 }
 
+
+if(!function_exists('admin_task_notif')){
+
+	function admin_task_notif($project_id, $module_id, $context){
+		$session = session();	
+		$model = model("NotificationModel");
+		$projmodel = model("ProjectModel");
+
+		if($session->has('admin-access')){
+
+			$model->insert([
+				'user_id' => 0,
+				'context' => $context,
+				'notif_to' => $projmodel->find($project_id)->client_id,
+				'is_read' => 0,
+				'module_id' => $module_id,
+				'module_type' => 'task'
+			]);
+		}
+	}
+
+}
+
+
+
+if(!function_exists('admin_comment_notif')){
+
+	function admin_comment_notif($task_id, $module_id, $context){
+		$session = session();	
+		$model = model("NotificationModel");
+		$projmodel = model("ProjectModel");
+		$taskmodel = model("TaskModel");
+
+		if($session->has('admin-access')){
+
+			$find_task = $taskmodel->where('id', $task_id)->get();
+
+			$model->insert([
+				'user_id' => 0,
+				'context' => $context,
+				'notif_to' => $projmodel->find($find_task->getRow()->project_id)->client_id,
+				'is_read' => 0,
+				'module_id' => $module_id,
+				'module_type' => 'comment'
+			]);
+		}
+	}
+
+}

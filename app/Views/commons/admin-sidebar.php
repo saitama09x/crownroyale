@@ -74,6 +74,14 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="<?= site_url('/admin/report') ?>" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Report
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="<?= site_url('/logout') ?>" class="nav-link">              
               <p>
                 Logout

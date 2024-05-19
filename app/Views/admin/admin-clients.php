@@ -27,8 +27,8 @@ Clients
 									<td><?= ($r->status == 1) ? "Active": 'Inactive' ?></td>
 									<td><?= date("M d, Y", strtotime($r->date_created)) ?></td>
 									<td>
-										<a href="#" class='btn btn-warning btn-sm'>Edit</a>
-										<a href='#' class='btn btn-info btn-sm'>Projects</a>
+										<a href="<?= site_url('/admin/edit-client/' . $r->id) ?>" class='btn btn-warning btn-sm'>Edit</a>
+										<a href='<?= site_url('/admin/client-projects/' . $r->id) ?>' class='btn btn-info btn-sm'>Projects</a>
 									</td>
 								</tr>
 							<?php endforeach ?>

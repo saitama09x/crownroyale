@@ -1,4 +1,12 @@
 <?= $this->extend('layouts/dashboard-layout') ?>
+<?= $this->section('header') ?>
+	<style>
+		div#comment:target {
+		   background-color: #000;
+		}
+	</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('page_title') ?>
 Task Info
 <?= $this->endSection() ?>
@@ -61,7 +69,7 @@ Task Info
 			<h4>Comments</h4>
 			<?php if($comments): ?>
 				<?php foreach($comments as $c): ?>
-					<div>
+					<div id="<?= 'comment' . $c->id ?>">
 						<blockquote>
 							<p><?= $c->comment ?></p>
 							<small><?= date("M d, Y H:i", strtotime($c->date_created)) ?></small>

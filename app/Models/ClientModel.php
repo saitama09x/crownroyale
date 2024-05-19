@@ -24,5 +24,16 @@ class ClientModel extends Model{
     protected $updatedField  = 'date_updated';
 
 
+    function get_projects($client_id){
+
+        $query = $this->db->query('select b.* from ' . $this->table . ' a left join projects b on a.id = b.client_id where a.id = ?', [$client_id]);
+
+        if(!$query->getNumRows()){
+            return false;
+        }
+
+        return $query->getResult();
+
+    }
 
 }

@@ -42,8 +42,9 @@ Dashboard
     </div>
   </div>
 </div>
+</div>
 
-<h5>Payment Status</h5>
+<div class='mb-3'><h5>Payment Status</h5></div>
 <div class='row'>
   <?php if($payments): ?>
     <?php foreach($payments as $i => $p): ?>

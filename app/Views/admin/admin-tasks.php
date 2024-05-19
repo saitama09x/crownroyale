@@ -10,7 +10,7 @@ Tasks
 			<a class='btn btn-sm btn-primary' href='<?= site_url('/admin/new-task') ?>'>New Task</a>
 		</div>
 
-		<?php if(count($tasks)): ?>
+		<?php if($tasks): ?>
 		<?php foreach($tasks as $p): ?>
 		<div class='card mt-3'>
 			<div class='card-header'><h4 class='card-title'>Project: <?= $p->project ?></h4></div>

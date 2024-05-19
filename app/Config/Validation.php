@@ -184,4 +184,20 @@ class Validation extends BaseConfig
             ],
         ]
     ];
+
+
+    public $valid_filter_report = [        
+        'project_id' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'Project Name is required'
+            ],
+        ],
+        'client_id' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'Description is required'
+            ],
+        ]
+    ];
 }

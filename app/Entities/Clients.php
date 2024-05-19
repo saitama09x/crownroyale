@@ -11,11 +11,24 @@ class Clients extends Entity{
 
 	protected $attributes = [
 		'clientname' => '',
-		'clientname' => '',
+		'clientaddress' => '',
 		'contactno' => '000000',
 		'email' => '',
 		'status' => '1',
 	];
+
+
+	function _get_edit_client(){
+
+		return [
+			'clientname' => $this->attributes['clientname'],
+			'clientaddress' => $this->attributes['clientaddress'],
+			'contactno' => $this->attributes['contactno'],
+			'email' => $this->attributes['email'],
+			'status' => $this->attributes['status']
+		];
+
+	}
 
 
 }

@@ -34,5 +34,18 @@ class Projects extends Entity{
 		
 	}
 
+	function _get_edit_project(){
+
+		return [
+			'projname' => $this->attributes['projname'],
+			'projdesc' => $this->attributes['projdesc'],
+			'projaddress' => $this->attributes['projaddress'],
+			'client_id' => $this->attributes['client_id'],
+			'startdate' => $this->attributes['startdate'],
+			'enddate' => $this->attributes['enddate'],
+			'projcost' => $this->attributes['projcost']
+		];
+
+	}
 
 }

@@ -15,6 +15,8 @@ class ProjectModel extends Model{
 
     protected $allowedFields = ['projname', 'projdesc', 'projaddress', 'client_id', 'startdate', 'enddate', 'projcost', 'user_id'];    
 
+    protected $returnType    = 'App\Entities\Projects'; 
+    
     protected $useTimestamps = true;
 
     protected $createdField  = 'date_created';
@@ -88,6 +90,52 @@ class ProjectModel extends Model{
         }
 
         return $series;
+    }
+
+    function get_report($project_id, $client_id, $date_from, $date_to){
+
+        $report_arr = [];
+
+        $query = $this->db->query("select a.*, (select clientname from clients where id = a.client_id) as client from " . $this->table . ' a where id = ? and client_id = ?', [$project_id, $client_id]);
+
+        if(!empty($date_from) && !empty($date_to)){
+            $query = $this->db->query("select a.*, (select clientname from clients where id = a.client_id) as client from " . $this->table . ' a where (id = ? and client_id = ?) and (startdate >= ? and enddate <= ?)', [$project_id, $client_id, $date_from, $date_to]);
+        }
+
+        if($query->getNumRows()){
+
+            foreach($query->getResult() as $q){
+
+                $obj = [
+                    'project' => $q,
+                    'tasks' => [],
+                    'payments' => []
+                ];
+
+                $query_payment = $this->db->query("select * from payments where project_id = ? and client_id = ?", [$q->id, $q->client_id]);
+
+                if($query_payment->getNumRows()){
+                    $obj['payments'] = $query_payment->getResult();
+                }
+
+                $query_task = $this->db->query("select a.*, (select concat(fname, ' ', lname) from users where id = a.user_id) as user, (select count(id) from comments where task_id = a.id) as total_comments from tasks a where project_id = ?", [$q->id]);
+
+                if($query_task->getNumRows()){
+                    $obj['tasks'] = $query_task->getResult();
+                }
+
+                $report_arr[] = $obj;
+
+            }
+
+        }
+
+        if(!count($report_arr)){
+            return false;
+        }
+
+        return $report_arr;
+
     }
 
 }
