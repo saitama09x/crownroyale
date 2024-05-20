@@ -24,7 +24,7 @@ Users
 									<td><?= $r->lname ?></td>
 									<td><?= $r->user_type ?></td>
 									<td><?= $r->date_created ?></td>
-									<td><a href="#" class='btn btn-sm btn-warning'>Edit</a></td>
+									<td><a href="<?= site_url('/admin/edit-user/' . $r->id) ?>" class='btn btn-sm btn-warning'>Edit</a></td>
 								</tr>
 							<?php endforeach ?>
 						<?php endif ?>

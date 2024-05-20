@@ -24,4 +24,17 @@ class Tasks extends Entity{
 		return $this;
 
 	}
+
+	function _get_edit_task(){
+
+		return [
+			'project_id' => $this->attributes['project_id'],
+			'descriptions' => $this->attributes['descriptions'],
+			'user_id' => $this->attributes['user_id'],
+			'status' => $this->attributes['status'],
+			'due_date' => $this->attributes['due_date']
+		];
+
+	}
+
 }

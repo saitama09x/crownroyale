@@ -15,6 +15,8 @@ class UserModel extends Model{
 
     protected $allowedFields = ['username', 'password', 'fname', 'lname', 'user_type'];    
 
+    protected $returnType    = 'App\Entities\Users'; 
+
     protected $useTimestamps = true;
 
     protected $createdField  = 'date_created';

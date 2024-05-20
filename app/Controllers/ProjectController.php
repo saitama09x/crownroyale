@@ -83,4 +83,94 @@ class ProjectController extends BaseController
 		$this->new_project();
 	}
 
+	function edit_project($project_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_project');
+
+		$model = model('ClientModel');
+		$projmodel = model('ProjectModel');
+
+		$find = $model->where('status', 1)->get();
+		$find_proj = $projmodel->find($project_id);
+
+		if(!$find_proj){
+
+			return "Invalid Project Record";
+
+		}
+
+		$opts = [];
+		if($find->getNumRows()){
+			
+			$temp = $find->getResult();
+
+			$opts = array_map(function($val){
+
+				return [
+					'value' => $val->id,
+					'label' => $val->clientname
+				];
+
+			}, $temp);
+		}
+
+		$obj = [
+			'validator' => $valid,
+			'opts' => $opts,
+			'project' => $find_proj
+		];
+
+		return project_html('editproject', $obj);
+
+	}
+
+	function do_update_project($project_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_project');
+
+		$valid->withRequest($this->request)->run();		
+
+		if(!count($valid->getErrors())){
+
+			$data = $this->request->getPost();
+
+			$new = new Projects($data);
+			$model = model('ProjectModel');
+
+			$model->where('id', $project_id)->set($new->_get_edit_project())->update();
+
+			return redirect()->to("/projects/edit-project/" . $project_id);
+
+		}
+
+		return $this->edit_project($project_id);
+
+	}
+
+	function single_proj_task($project_id){
+
+		$model = model('TaskModel');			
+		$projmodel = model('ProjectModel');
+
+		$find = $projmodel->find($project_id);
+
+		if(!$find){
+			return "Invalid Project Record";
+		}
+
+		$all_task = $model->get_project_tasks($project_id);
+
+		$obj = [
+			'tasks' => $all_task,
+			'project' => $find
+		];
+
+		return project_html('projtasks', $obj);
+
+	}
+
 }

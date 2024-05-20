@@ -148,6 +148,42 @@ class Validation extends BaseConfig
         ],
     ];
 
+     public $valid_profile = [        
+        'fname' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'lname' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'user_type' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ]
+    ];
+
+    public $valid_account = [        
+        'username' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'password' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ]
+    ];
+
      public $valid_new_task = [        
         'project_id' => [
             'rules' => 'required',

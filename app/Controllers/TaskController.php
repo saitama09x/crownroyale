@@ -171,4 +171,84 @@ class TaskController extends BaseController
 
 		return redirect()->to("/tasks/view-task/" . $task_id);
 	}
+
+
+	function edit_task($task_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_task');
+
+		$model = model('ProjectModel');		
+		$usermodel = model('UserModel');
+		$taskmodel = model("TaskModel");
+
+		$find_task = $taskmodel->find($task_id);
+
+		if(!$find_task){
+			return "Invalid Task Record";
+		}
+
+		$all_proj = $model->get();
+		$all_user = $usermodel->where('user_type', 'installer')->get();
+
+		$proj_arr = [];
+		$user_arr = [];
+
+		if($all_proj->getNumRows()){
+			$temp = $all_proj->getResult();
+			$proj_arr = array_map(function($val){
+				return [
+					'value' => $val->id,
+					'label' => $val->projname
+				];
+			}, $temp);
+		}
+
+		if($all_user->getNumRows()){			
+			$temp = $all_user->getResult();
+			$user_arr = array_map(function($val){
+				return [
+					'value' => $val->id,
+					'label' => $val->fname . ' ' . $val->lname
+				];
+			}, $temp);
+		}
+
+		$obj = [
+			'task' => $find_task,
+			'projects' => $proj_arr,
+			'users' => $user_arr,
+			'validator' => $valid
+		];
+
+		return task_html('edittask', $obj);
+
+	}
+
+	function do_update_task($task_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_task');
+
+		$valid->withRequest($this->request)->run();		
+
+		if(!count($valid->getErrors())){
+
+			$data = $this->request->getPost();
+
+			$new = new Tasks($data);
+
+			$model = model('TaskModel');
+
+			$model->where('id', $task_id)->set($new->_get_edit_task())->update();
+
+			return redirect()->to("/tasks/edit-task/" . $task_id);
+
+		}
+
+		$this->edit_task($task_id);
+
+	}
 }

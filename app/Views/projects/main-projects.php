@@ -28,8 +28,8 @@ Projects
 									<td><?= date("M d, Y", strtotime($r->enddate)) ?></td>
 									<td><?= number_format($r->projcost) ?></td>
 									<td>
-										<a href="#" class='btn btn-warning btn-sm'>Edit</a>
-										<a href='#' class='btn btn-info btn-sm'>Tasks</a>
+										<a href="<?= site_url('/projects/edit-project/' . $r->id) ?>" class='btn btn-warning btn-sm'>Edit</a>
+										<a href='<?= site_url('/projects/project-task/' . $r->id) ?>' class='btn btn-info btn-sm'>Tasks</a>
 									</td>
 								</tr>
 							<?php endforeach ?>

@@ -23,4 +23,24 @@ class Users extends Entity{
 		return $this;
 
 	}
+
+	function _get_profile(){
+
+		return [
+			'fname' => $this->attributes['fname'],
+			'lname' => $this->attributes['lname'],
+			'user_type' => $this->attributes['user_type']
+		];
+
+	}
+
+
+	function _get_account(){
+
+		return [
+			'username' => $this->attributes['username'],
+			'password' => password_hash($this->attributes['password'], PASSWORD_DEFAULT)
+		];
+
+	}
 }

@@ -27,7 +27,9 @@ Tasks
 									<td><?= $t->status ?></td>
 									<td><?= $t->due_date ?></td>
 									<td><?= $t->total_comments ?></td>
-									<td><a href='<?= site_url('/tasks/view-task/' . $t->id) ?>' class='btn btn-sm btn-info'>View</a></td>
+									<td>
+										<a href='<?= site_url('/tasks/edit-task/' . $t->id) ?>' class='btn btn-sm btn-warning mr-3'>Edit</a>
+										<a href='<?= site_url('/tasks/view-task/' . $t->id) ?>' class='btn btn-sm btn-info'>View</a></td>
 								</tr>
 							<?php endforeach ?>
 						<?php endif ?>

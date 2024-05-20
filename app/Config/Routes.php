@@ -23,10 +23,12 @@ $routes->group('tasks', function($routes){
 	$routes->get("/", 'TaskController::project_tasks');
 	$routes->get('new-task', 'TaskController::new_task');
 	$routes->get('view-task/(:any)', 'TaskController::view_task/$1');
+	$routes->get('edit-task/(:any)', 'TaskController::edit_task/$1');
 
 	$routes->post('new-task', 'TaskController::do_new_task');
 	$routes->put('view-task/(:any)', 'TaskController::task_comment/$1');
 	$routes->put('task-status/(:any)', 'TaskController::update_task_status/$1');
+	$routes->put('edit-task/(:any)', 'TaskController::do_update_task/$1');
 });
 
 $routes->group('notif', function($routes){
@@ -39,9 +41,12 @@ $routes->group('projects', function($routes){
 
 	$routes->get("/", 'ProjectController::main_projects');
 	$routes->get("new-project", 'ProjectController::new_project');
-
+	$routes->get('edit-project/(:any)', 'ProjectController::edit_project/$1');
+	$routes->get('project-task/(:any)', 'ProjectController::single_proj_task/$1');
 
 	$routes->post('new-project', 'ProjectController::do_new_project');
+
+	$routes->put('edit-project/(:any)', 'ProjectController::do_update_project/$1');
 });
 
 $routes->group('payments', function($routes){
@@ -68,9 +73,11 @@ $routes->group('admin', function($routes){
 	$routes->get('tasks', 'AdminController::admin_project_tasks');
 	$routes->get('users', 'AdminController::admin_users');
 	$routes->get('add-user', 'AdminController::admin_add_user');
+	$routes->get('edit-user/(:any)', 'AdminController::admin_edit_user/$1');
 	$routes->get('project-task/(:any)', 'AdminController::admin_single_proj_task/$1');
 	$routes->get('new-task', 'AdminController::admin_new_task');
 	$routes->get('view-task/(:any)', 'AdminController::admin_view_task/$1');
+	$routes->get('edit-task/(:any)', 'AdminController::admin_edit_task/$1');
 	$routes->get('payments', 'AdminController::admin_payments');
 	$routes->get('view-payments/(:any)', 'AdminController::admin_viewpayments/$1');
 	$routes->get('report', 'AdminController::admin_report');
@@ -87,4 +94,8 @@ $routes->group('admin', function($routes){
 	$routes->put('task-status/(:any)', 'AdminController::update_task_status/$1');
 	$routes->put('edit-client/(:any)', 'AdminController::do_edit_client/$1');
 	$routes->put('edit-project/(:any)', 'AdminController::do_update_project/$1');
+	$routes->put('edit-task/(:any)', 'AdminController::do_update_task/$1');
+	$routes->put('edit-user/(:any)', 'AdminController::do_update_user/$1');
+	$routes->put('edit-user-account/(:any)', 'AdminController::do_update_account/$1');
+
 });

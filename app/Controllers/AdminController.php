@@ -419,6 +419,76 @@ class AdminController extends BaseController
 
 	}
 
+	function admin_edit_user($user_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_profile');
+
+		$model = model("UserModel");
+
+		$find = $model->find($user_id);
+
+		$obj = [
+			'validator' => $valid,
+			'find' => $find
+		];
+
+		return admin_html('admin-edituser', $obj);
+	}
+
+	function do_update_user($user_id){
+		
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_profile');
+
+		$valid->withRequest($this->request)->run();		
+
+		if(!count($valid->getErrors())){
+
+			$data = $this->request->getPost();
+
+			$new = new Users($data);
+			$model = model('UserModel');
+
+			$model->where('id', $user_id)->set($new->_get_profile())->update();
+
+			return redirect()->to('/admin/edit-user/' . $user_id);
+
+		}
+
+
+		return $this->admin_edit_user($user_id);
+
+	}
+
+	function do_update_account($user_id){
+		
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_account');
+
+		$valid->withRequest($this->request)->run();		
+
+		if(!count($valid->getErrors())){
+
+			$data = $this->request->getPost();
+			
+			$new = new Users($data);
+			$model = model('UserModel');
+
+			$model->where('id', $user_id)->set($new->_get_account())->update();
+
+			return redirect()->to('/admin/edit-user/' . $user_id);
+
+		}
+
+
+		return $this->admin_edit_user($user_id);
+
+	}
+
 	function admin_project_tasks(){
 
 		$model = model('TaskModel');				
@@ -503,6 +573,85 @@ class AdminController extends BaseController
 		}
 
 		$this->admin_new_task();
+
+	}
+
+	function admin_edit_task($task_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_task');
+
+		$model = model('ProjectModel');		
+		$usermodel = model('UserModel');
+		$taskmodel = model("TaskModel");
+
+		$find_task = $taskmodel->find($task_id);
+
+		if(!$find_task){
+			return "Invalid Task Record";
+		}
+
+		$all_proj = $model->get();
+		$all_user = $usermodel->where('user_type', 'installer')->get();
+
+		$proj_arr = [];
+		$user_arr = [];
+
+		if($all_proj->getNumRows()){
+			$temp = $all_proj->getResult();
+			$proj_arr = array_map(function($val){
+				return [
+					'value' => $val->id,
+					'label' => $val->projname
+				];
+			}, $temp);
+		}
+
+		if($all_user->getNumRows()){			
+			$temp = $all_user->getResult();
+			$user_arr = array_map(function($val){
+				return [
+					'value' => $val->id,
+					'label' => $val->fname . ' ' . $val->lname
+				];
+			}, $temp);
+		}
+
+		$obj = [
+			'task' => $find_task,
+			'projects' => $proj_arr,
+			'users' => $user_arr,
+			'validator' => $valid
+		];
+
+		return admin_html('admin-edittask', $obj);
+
+	}
+
+	function do_update_task($task_id){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_new_task');
+
+		$valid->withRequest($this->request)->run();		
+
+		if(!count($valid->getErrors())){
+
+			$data = $this->request->getPost();
+
+			$new = new Tasks($data);
+
+			$model = model('TaskModel');
+
+			$model->where('id', $task_id)->set($new->_get_edit_task())->update();
+
+			return redirect()->to("/admin/edit-task/" . $task_id);
+
+		}
+
+		$this->admin_edit_task($task_id);
 
 	}
 
