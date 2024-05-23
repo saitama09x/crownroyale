@@ -36,4 +36,15 @@ class ClientModel extends Model{
 
     }
 
+    function get_clients(){
+
+        $query = $this->db->query("select a.*, (select count(client_id) from users_client where client_id = a.id) as has_connect from " . $this->table . ' a');
+
+        if(!$query->getNumRows()){
+            return false;
+        }
+
+        return $query->getResult();
+    }
+
 }

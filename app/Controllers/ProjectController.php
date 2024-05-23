@@ -70,11 +70,14 @@ class ProjectController extends BaseController
 		if(!count($valid->getErrors())){
 
 			$data = $this->request->getPost();
-
+			$validData = $valid->getValidated();
+			
 			$new = new Projects($data);
 			$model = model('ProjectModel');
 
 			$model->save($new);
+
+			project_notif($validData['client_id'], $model->insertID(), "New Project title: " . $validData['projname']);
 
 			return redirect()->to("/projects");
 

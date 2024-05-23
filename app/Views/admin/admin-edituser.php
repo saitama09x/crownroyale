@@ -17,6 +17,9 @@ User
 				<li class="nav-item">
 					<a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Account</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-client" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Client Information</a>
+				</li>
 				</ul>
 
 				<div class="tab-content" id="custom-tabs-three-tabContent">
@@ -46,6 +49,34 @@ User
 							</div>
 						</div>
 						<?= form_close() ?>
+					</div>
+					<div class="tab-pane fade" id="custom-tabs-three-client" role="tabpanel" aria-labelledby="custom-tabs-three-profile-tab">
+						<?php if($client): ?>
+							<div class='row mt-4'>
+								<div class='col-md-6'>
+									<label>Client / Organization Name</label>
+									<p><?= $client->clientname ?></p>
+								</div>
+								<div class='col-md-6'>
+									<label>Address</label>
+									<p><?= $client->clientaddress ?></p>
+								</div>
+							</div>
+							<div class='row mt-3'>
+								<div class='col-md-6'>
+									<label>Contact No.</label>
+									<p><?= $client->contactno ?></p>
+								</div>
+								<div class='col-md-6'>
+									<label>Email</label>
+									<p><?= $client->email ?></p>
+								</div>
+							</div>
+						<?php else: ?>
+							<div class='my-3 text-center'>
+								<h4>This account is not connected to client</h4>
+							</div>
+						<?php endif; ?>
 					</div>
 				</div>			
 			</div>

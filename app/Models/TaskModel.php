@@ -38,7 +38,7 @@ class TaskModel extends Model{
                     'tasks' => []
                 ];
 
-                $query = $this->db->query("select a.*, (select count(id) from comments where task_id = a.id) as total_comments, (select concat(fname, ' ', lname) from users where id = a.user_id) as user from " . $this->table . ' a where project_id = ?', [$p->id]);  
+                $query = $this->db->query("select a.*, (select count(id) from comments where task_id = a.id) as total_comments, (select concat(fname, ' ', lname) from users where id = a.user_id) as user, (select count(task_id) from assignees where task_id = a.id) as total_assigns from " . $this->table . ' a where project_id = ?', [$p->id]);  
 
                 if($query->getNumRows()){
                     foreach($query->getResult() as $q){

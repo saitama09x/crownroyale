@@ -93,13 +93,22 @@ class TaskController extends BaseController
 			$data = $this->request->getPost();
 
 			$new = new Tasks($data);
+			$new->user_id = user_id();
 
 			$model = model('TaskModel');
+			$assignmodel = model('AssignModel');
 
 			$model->save($new);
 
-			insert_notif(post_request('project_id'), "New Task has been created: #" . $model->insertID());
-			
+			task_client_notif(post_request('project_id'), $model->insertID(), "New Task has been created: #" . $model->insertID());
+
+			task_installer_notif(post_request('user_id'), $model->insertID(), "New Task has been created: #" . $model->insertID());
+
+			$assignmodel->insert([
+				'task_id' => $model->insertID(),
+				'user_id' => post_request('user_id')
+			]);
+
 			return redirect()->to("/tasks");
 
 		}
@@ -168,6 +177,10 @@ class TaskController extends BaseController
 		$model_task = model("TaskModel");
 
 		$model_task->where('id', $task_id)->set(['status' => $status])->update();
+
+		task_status_client_notif($task_id, "Task has changed status: " . $status);
+
+		task_status_installer_notif($task_id, "Task has changed status: " . $status);
 
 		return redirect()->to("/tasks/view-task/" . $task_id);
 	}
@@ -241,8 +254,19 @@ class TaskController extends BaseController
 			$new = new Tasks($data);
 
 			$model = model('TaskModel');
+			$assignmodel = model('AssignModel');
 
 			$model->where('id', $task_id)->set($new->_get_edit_task())->update();
+			
+			task_client_notif(post_request('project_id'), $task_id, "Task has been Updated: #" . $task_id);
+
+			task_installer_notif(post_request('user_id'), $task_id, "Task has been Updated: #" . $task_id);
+
+			$assignmodel->where('task_id', $task_id)->delete();
+			$assignmodel->insert([
+				'task_id' => $task_id,
+				'user_id' => post_request('user_id')
+			]);
 
 			return redirect()->to("/tasks/edit-task/" . $task_id);
 

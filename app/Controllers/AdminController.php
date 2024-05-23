@@ -205,20 +205,71 @@ class AdminController extends BaseController
 	
 	function admin_clients(){
 
-		$model = model('ClientModel');
+		$valid = Services::validation();
 
-		$find = $model->get();
+		$valid->setRuleGroup('valid_client_user');
+
+		$model = model('ClientModel');
+		$clientmodel = model('UserClientModel');
+		$usermodel = model("UserModel");
+
+		$find = $model->get_clients();
+		$find_user = $usermodel->where('user_type', 'client')->get();
 
 		$result_arr = [];
-		if($find->getNumRows()){
-			$result_arr = $find->getResult();
+		$user_arr = [];
+
+		if($find_user->getNumRows()){
+			$temp = $find_user->getResult();
+			$user_arr = array_map(function($val){
+				return [
+					'value' => $val->id,
+					'label' => $val->fname . ' ' . $val->lname
+				];
+			}, $temp);
 		}
 
 		$obj = [
-			'results' => $result_arr
+			'validator' => $valid,
+			'results' => $find,
+			'users' => $user_arr
 		];
 
 		return admin_html('admin-clients', $obj);
+
+	}
+
+	function do_client_user(){
+
+		$valid = Services::validation();
+
+		$valid->setRuleGroup('valid_client_user');
+
+		$valid->withRequest($this->request)->run();
+
+		if(!count($valid->getErrors())){	
+		
+			$model = model('UserClientModel');
+			
+			$model->where('user_id', post_request('user_id'))->delete();
+
+			$model->insert([
+				'client_id' => post_request('client_id'),
+				'user_id' => post_request('user_id'),
+			]);
+
+		}
+
+		return redirect()->to("/admin/clients");
+	}
+
+	function discon_client_user(){
+
+		$model = model('UserClientModel');
+			
+		$model->where('client_id', post_request('client_id'))->delete();
+
+		return redirect()->to("/admin/clients");
 
 	}
 
@@ -348,11 +399,14 @@ class AdminController extends BaseController
 		if(!count($valid->getErrors())){
 
 			$data = $this->request->getPost();
+			$validData = $valid->getValidated();			
 
 			$new = new Projects($data);
 			$model = model('ProjectModel');
 
 			$model->save($new);
+
+			admin_project_notif($validData['client_id'], $model->insertID(), "New Project title: " . $validData['projname']);
 
 			return redirect()->to("/admin/projects");
 
@@ -375,7 +429,7 @@ class AdminController extends BaseController
 		}
 
 		$obj = [
-			'results' => $result_arr
+			'results' => $result_arr			
 		];
 
 		return admin_html('admin-users', $obj);
@@ -426,11 +480,14 @@ class AdminController extends BaseController
 		$valid->setRuleGroup('valid_profile');
 
 		$model = model("UserModel");
+		$clientmodel = model('UserClientModel');
 
 		$find = $model->find($user_id);
+		$find_client = $clientmodel->get_connect_client($user_id);
 
 		$obj = [
 			'validator' => $valid,
+			'client' => $find_client,
 			'find' => $find
 		];
 
@@ -561,13 +618,24 @@ class AdminController extends BaseController
 			$data = $this->request->getPost();
 
 			$new = new Tasks($data);
+			$new->user_id = 0;
 
 			$model = model('TaskModel');
+			$assignmodel = model('AssignModel');
 
 			$model->save($new);
 
-			admin_task_notif(post_request('project_id'), $model->insertID(), "New Task has been created: #" . $model->insertID());
+			admin_task_client_notif(post_request('project_id'), $model->insertID(), "New Task has been created: #" . $model->insertID());
+			
+			admin_task_installer_notif(post_request('user_id'), $model->insertID(), "New Task has been created: #" . $model->insertID());
 
+
+			$assignmodel->insert([
+				'task_id' => $model->insertID(),
+				'user_id' => post_request('user_id')
+			]);
+
+			
 			return redirect()->to("/admin/tasks");
 
 		}
@@ -644,8 +712,16 @@ class AdminController extends BaseController
 			$new = new Tasks($data);
 
 			$model = model('TaskModel');
+			$assignmodel = model('AssignModel');
 
 			$model->where('id', $task_id)->set($new->_get_edit_task())->update();
+
+			$assignmodel->where('task_id', $task_id)->delete();
+
+			$assignmodel->insert([
+				'task_id' => $task_id,
+				'user_id' => post_request('user_id')
+			]);
 
 			return redirect()->to("/admin/edit-task/" . $task_id);
 
@@ -663,9 +739,11 @@ class AdminController extends BaseController
 
 		$model_task = model("TaskModel");
 		$model_comments = model('CommentModel');
+		$model_assign = model("AssignModel");
 
 		$find = $model_task->get_single_task($task_id);
 		$find_comments = $model_comments->get_all_comments($task_id);
+		$find_assign = $model_assign->get_assigned($task_id);
 
 		if(!$find){
 			return "Invalid Tasks, please go back!";
@@ -673,6 +751,7 @@ class AdminController extends BaseController
 
 		$obj = [
 			'data' => $find,
+			'assign' => $find_assign,
 			'comments' => $find_comments,
 			'validator' => $valid
 		];
@@ -700,7 +779,8 @@ class AdminController extends BaseController
 				'status' => 1
 			]);
 			
-			admin_comment_notif($task_id, $model->insertID(), "You have new comment in Task #" . $task_id);
+			admin_comment_client_notif($task_id, $model->insertID(), "You have new comment in Task #" . $task_id);
+			admin_comment_assinged_notif($task_id, $model->insertID(), "You have new comment in Task #" . $task_id);
 
 			return redirect()->to('admin/view-task/' . $task_id);
 		}

@@ -15,6 +15,8 @@ $routes->get('/', 'DashboardController::main_dashboard');
 
 $routes->get('login', 'UserController::user_login');
 $routes->get('logout', 'UserController::logout');
+// $routes->get('converter', 'DashboardController::csv_converter');
+// $routes->post('converter', 'DashboardController::do_csv_converter');
 
 $routes->post('login', 'UserController::do_login');
 
@@ -65,7 +67,8 @@ $routes->group('admin', function($routes){
 	$routes->get('projects', 'AdminController::admin_projects');
 	$routes->get('clients', 'AdminController::admin_clients');
 	$routes->get('add-client', 'AdminController::admin_add_client');
-	$routes->get('edit-client/(:any)', 'AdminController::admin_edit_client/$1');
+	$routes->get('edit-client/(:any)', 'AdminController::admin_edit_client/$1');	
+
 	$routes->get('client-projects/(:any)', 'AdminController::admin_client_projects/$1');
 	$routes->get('new-project', 'AdminController::admin_new_project');
 	$routes->get('edit-project/(:any)', 'AdminController::admin_edit_project/$1');
@@ -84,6 +87,9 @@ $routes->group('admin', function($routes){
 
 	$routes->post('do-login', 'AdminController::do_login');
 	$routes->post('add-client', 'AdminController::do_add_client');
+	$routes->post('client-user', 'AdminController::do_client_user');
+	$routes->post('discon-client-user', 'AdminController::discon_client_user');
+
 	$routes->post('new-project', 'AdminController::do_new_project');
 	$routes->post('add-user', 'AdminController::do_add_user');
 	$routes->post('new-task', 'AdminController::do_new_task');

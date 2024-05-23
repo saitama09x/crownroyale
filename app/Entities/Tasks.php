@@ -17,6 +17,10 @@ class Tasks extends Entity{
 		'due_date' => ''	
 	];
 
+	function setUser_id($user_id){
+		$this->attributes['user_id'] = $user_id;
+	}
+
 	function setDue_date($date){
 
 		$this->attributes['due_date'] = date("Y-m-d", strtotime($date));

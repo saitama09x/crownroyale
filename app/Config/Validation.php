@@ -196,13 +196,7 @@ class Validation extends BaseConfig
             'errors' => [
                 'required' => 'required'
             ],
-        ],
-        'user_id' => [
-            'rules' => 'required',
-            'errors' => [
-                'required' => 'required'
-            ],
-        ],
+        ],        
         'due_date' => [
             'rules' => 'required',
             'errors' => [
@@ -233,6 +227,21 @@ class Validation extends BaseConfig
             'rules' => 'required',
             'errors' => [
                 'required' => 'Description is required'
+            ],
+        ]
+    ];
+
+    public $valid_client_user = [        
+        'client_id' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
+            ],
+        ],
+        'user_id' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'required'
             ],
         ]
     ];

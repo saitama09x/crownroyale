@@ -17,12 +17,13 @@ Tasks
 			<div class='card-header'><h4 class='card-title'>Project: <?= $p->project ?></h4></div>
 			<div class='card-body'>
 				<table class='table'>
-					<thead><tr><th>Tasks</th><th>Assigned To:</th><th>Status</th><th>Due Date</th><th>Comments</th><th>Action</th></tr></thead>
+					<thead><tr><th>Tasks</th><th>Total Assigned</th><th>Created By:</th><th>Status</th><th>Due Date</th><th>Comments</th><th>Action</th></tr></thead>
 					<tbody>
 						<?php if(count($p->tasks)): ?>
 							<?php foreach($p->tasks as $t): ?>
 								<tr>
 									<td><?= $t->descriptions ?></td>
+									<td><?= $t->total_assigns ?></td>
 									<td><?= $t->user ?></td>
 									<td><?= $t->status ?></td>
 									<td><?= $t->due_date ?></td>

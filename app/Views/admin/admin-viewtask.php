@@ -9,7 +9,12 @@ Task Info
 		<div class='row align-items-center'>
 			<div class='col-md-6'>
 				<div><?= strtoupper($data->project) ?></div>
-				<div>Assigned To: <strong><?= $data->user ?></strong></div>
+				<div>Assigned To:</div>
+				<?php if($assign): ?>
+					<?php foreach($assign as $a): ?>
+						<div><label><?= $a->user ?></label></div>
+					<?php endforeach ?>
+				<?php endif; ?>
 			</div>
 			<div class='col-md-6'>
 				<div class='text-right'>
