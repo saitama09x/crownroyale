@@ -15,10 +15,29 @@ $routes->get('/', 'DashboardController::main_dashboard');
 
 $routes->get('login', 'UserController::user_login');
 $routes->get('logout', 'UserController::logout');
-// $routes->get('converter', 'DashboardController::csv_converter');
-// $routes->post('converter', 'DashboardController::do_csv_converter');
+$routes->get('converter', 'DashboardController::csv_converter');
+$routes->post('converter', 'DashboardController::do_csv_converter');
+
+$routes->get('dropout', 'DashboardController::csv_converter_dropout');
+$routes->post('dropout', 'DashboardController::do_converter_dropout');
+
+$routes->get('scholar', 'DashboardController::csv_converter_scholar');
+$routes->post('scholar', 'DashboardController::do_converter_scholar');
+
+$routes->get('update-scholar', 'DashboardController::update_scholar');
+$routes->post('update-scholar', 'DashboardController::do_update_scholar');
+
+$routes->get('emps', 'DashboardController::csv_converter_employee');
+$routes->post('emps', 'DashboardController::do_update_emp_age');
 
 $routes->post('login', 'UserController::do_login');
+
+$routes->get("organization", "DashboardController::lbf_organizations");
+$routes->post("organization", "DashboardController::update_lbf_organization");
+$routes->get("encrypt-emps", "DashboardController::encrypt_emps");
+
+$routes->get('staffing', "DashboardController::csv_branch_staffing");
+$routes->post('staffing', "DashboardController::do_branch_staffing");
 
 $routes->group('tasks', function($routes){
 
